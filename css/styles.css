@@ -101,6 +101,11 @@ section {
   color: #000;
 }
 
+.menu__link.active {
+  background-color: #777;
+  color: #fff;
+}
+
 /* @media only screen and (min-width: 35em) {
   .navbar__menu .menu__link {
     display: inline-block;
@@ -235,6 +240,7 @@ section.active {
     rgba(0, 0, 0, 0.1) 0%,
     rgba(0, 0, 0, 0) 100%
   );
+  border: 2px solid red;
 }
 
 section.active .landing__container::before {

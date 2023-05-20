@@ -57,33 +57,58 @@ for (const key in navItems) {
   // use of appendChild
   fragment.appendChild(li);
 }
-
 navbarList.appendChild(fragment);
 
+// create a global var holding the link elements
+const links = document.querySelectorAll(".menu__link");
+
 // Add class 'active' to section when near top of viewport
+const linkDict = {};
+for (const link of links) {
+  linkDict[link.innerHTML] = link;
+}
+
+// global active link to hold which link is active
+let currentActive = null;
 document.addEventListener("scroll", (e) => {
   for (const section of sections) {
     section.className = "";
     const rec = section.getBoundingClientRect();
-    if (window.screenTop >= rec.top && window.screenTop <= rec.bottom) {
+    const headerHeight = document.querySelector("header").offsetHeight;
+    if (
+      window.screenTop + headerHeight >= rec.top &&
+      window.screenTop + headerHeight < rec.bottom
+    ) {
       section.className = "active";
+      const link = linkDict[section.dataset["nav"]];
+      if (currentActive !== link) {
+        if (currentActive) {
+          currentActive.classList.remove("active");
+        }
+        currentActive = link;
+        link.classList.add("active");
+      }
     }
   }
 });
 
 // Scroll to sections using smooth scroll
-const links = document.querySelectorAll(".menu__link");
-for (const el of links) {
-  el.addEventListener("click", (e) => {
+for (const link in linkDict) {
+  linkDict[link].addEventListener("click", (e) => {
     // use the nav item name as the key for the navItem dict and smooth scroll to section
     e.preventDefault();
-    const targetSection = document.querySelector(
-      `#${navItems[e.target.innerHTML]}`
-    );
-    targetSection.scrollIntoView({
+    const clickedSection = navItems[e.target.innerHTML];
+    const targetSection = document.querySelector(`#${clickedSection}`);
+    const headerHeight = document.querySelector("header").offsetHeight;
+    // place scrolled position under the navbar
+    const elPosition =
+      targetSection.getBoundingClientRect().top +
+      window.pageYOffset -
+      headerHeight;
+
+    window.scrollTo({
       behavior: "smooth",
-      block: "start",
-      inline: "nearest",
+      top: elPosition,
     });
   });
 }
